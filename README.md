@@ -72,3 +72,14 @@ The motivation for this project comes from our shared interest in football analy
 - A comparative analysis showing which modelling perspective best predicts EPL outcomes.  
 - Insights into how performance, financial, and market factors influence predictive accuracy and generalization.  
 - A final report demonstrating practical machine learning experimentation and data exploration in the context of sports analytics.
+
+### Reinforcement Learning Extension Plan
+
+- **Objective:** Frame match outcome prediction as a sequential decision problem where an agent allocates predictive confidence or staking decisions across a season, using historical fixtures as state transitions.
+- **Environment:** Use cleaned league results to build season-long trajectories; state features combine engineered match deltas, financial indicators, and market odds snapshots aggregated per fixture. Reward options: (1) log-loss improvement over baseline predictions, (2) betting return using implied odds, or (3) calibration-aware scoring such as Brier reward.
+- **Agent Design:** Start with off-policy evaluation using historical policy (baseline model). Candidate algorithms include contextual bandits for per-fixture actions, or episodic RL (e.g., PPO, A2C) with rolling bankroll state to capture temporal dependencies.
+- **Training Strategy:** Pretrain models on past seasons (≥3 years) with curriculum that gradually increases action space complexity. Use offline RL with conservative Q-learning or doubly robust estimators to mitigate distribution shift.
+- **Integration Path:** Align RL agent inputs with existing `match_features_df`; reuse TensorFlow pipelines for feature normalization. Compare agent-derived policies against supervised baselines via season replay simulations and run attribution (Shapley/LOO) on policy value drivers.
+- **Next Steps:** Formalize reward definition, create environment wrapper (Gym-style), and prototype contextual bandit as low-risk stepping stone before full RL rollout.
+
+
