@@ -12,10 +12,6 @@ BASE_DIR = Path("understat_data")
 PLAYER_DIR = BASE_DIR / "Players"
 PLAYER_DIR.mkdir(parents=True, exist_ok=True)
 
-
-# ------------------------------------------------
-# Step 1: Combine & Clean League Players
-# ------------------------------------------------
 def combine_league_players():
     print("🔄 Combining all league_players.csv files...")
 
@@ -60,9 +56,6 @@ def combine_league_players():
     return grouped
 
 
-# ------------------------------------------------
-# Step 2: Fetch and Save Player Stats
-# ------------------------------------------------
 async def fetch_player_stats(understat, player_id, player_name):
     """Fetch detailed grouped stats for each player."""
     try:
@@ -126,10 +119,6 @@ async def save_player_stats(player_id, player_name, stats):
     else:
         print(f"No usable records for {player_name} ({player_id})")
 
-
-# ------------------------------------------------
-# Async orchestration with concurrency limit
-# ------------------------------------------------
 async def process_player(sem, understat, pid, name):
     """Fetch and save player stats with concurrency limit."""
     async with sem:
@@ -154,10 +143,6 @@ async def collect_all_player_stats(players_df, max_concurrent=8):
 
     print("\nAll player stats successfully collected.")
 
-
-# ------------------------------------------------
-# Main
-# ------------------------------------------------
 def main():
     combined_df = combine_league_players()
 
