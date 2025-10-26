@@ -42,6 +42,14 @@ def load_dataset() -> pd.DataFrame:
     return df
 
 
+def get_weekday_columns(df: pd.DataFrame) -> List[str]:
+    return [
+        col
+        for col in df.columns
+        if col.startswith(WEEKDAY_PREFIX) and col != "match_weekday_index"
+    ]
+
+
 FEATURE_VIEWS: Dict[str, Dict[str, List[str]]] = {
     "performance_dense": {
         "description": "Rolling goal/xG aggregates over 5–10 match windows",
@@ -125,8 +133,9 @@ def export_views(df: pd.DataFrame) -> None:
         "outcome_id",
     ]
 
+    weekday_cols = get_weekday_columns(df)
+
     for view_name, spec in FEATURE_VIEWS.items():
-        weekday_cols = [col for col in df.columns if col.startswith(WEEKDAY_PREFIX)]
         full_columns = metadata_cols + spec["columns"] + weekday_cols
         validate_columns(df, spec["columns"], view_name)
         view_df = df[full_columns].copy()
@@ -142,7 +151,7 @@ def main() -> None:
     dataset = load_dataset()
     export_views(dataset)
     summary_rows = []
-    weekday_cols = [col for col in dataset.columns if col.startswith(WEEKDAY_PREFIX)]
+    weekday_cols = get_weekday_columns(dataset)
     for name, spec in FEATURE_VIEWS.items():
         summary_rows.append(
             {
