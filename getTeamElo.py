@@ -256,6 +256,5 @@ def main():
         process_league(league)
     print("Done.")
 
-
 if __name__ == "__main__":
     main()
