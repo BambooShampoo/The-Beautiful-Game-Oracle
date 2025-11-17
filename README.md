@@ -135,7 +135,7 @@ The motivation for this project comes from our shared interest in football analy
 5. **Smoke-test and build**
    ```bash
    pytest
-   cd web && npm run test && npm run build
+   cd web && npm run test && npm run build && npm run dev
    ```
 
 6. **Deploy**
