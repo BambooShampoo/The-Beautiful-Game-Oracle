@@ -96,3 +96,47 @@ The motivation for this project comes from our shared interest in football analy
 - Compact, ratio-based features (e.g., log goal/xG/points ratios plus attack/defence gaps) tailor the input space to what a dense net can learn efficiently while stripping redundant raw sums.
 - Features are z-scored using training-split statistics (`scale_strategy="zscore"`) and paired with seasonal sin/cos context, stabilising optimisation without distorting the RL or market pipelines.
 - Splits receive their own `tf.data` pipelines derived from the scaled arrays, so validation/test performance reflects the exact preprocessing state used at inference time.
+
+## Deploying a New Dataset Version to the Web
+
+1. **Materialise the CSV**
+   ```bash
+   # Example for the v7 builder – swap in the appropriate script/version
+   python build_dataset_version7.py
+   ```
+   This writes `understat_data/Dataset_Version_7.csv` (or the equivalent for newer builders).
+
+2. **Prime caches and validate features**
+   ```bash
+   python pipelines/predict_fixture.py 2025 "Arsenal" "Leeds" --dataset-version 7
+   ```
+   The call hydrates the pandas feature store, writes `understat_data/team_cache/<LEAGUE>_<SEASON>.json`, and ensures `understat_data/feature_cache.sqlite` reflects the new dataset.
+
+3. **Publish refreshed models**
+   ```bash
+   python scripts/publish_model.py \
+     --run-id run_YYYYMMDD-HHMMSS \
+     --dataset-version 7 \
+     --model performance_dense=artifacts/run_export/performance_dense.onnx:onnx \
+     --model market_gradient_boost=artifacts/run_export/market_gradient_boost.onnx:onnx \
+     --preprocessing performance_dense=artifacts/run_export/performance_dense_preprocessing.json \
+     --preprocessing market_gradient_boost=artifacts/run_export/market_gradient_boost_preprocessing.json \
+     --output-dir artifacts/manifests
+   ```
+   The manifest is what the web service loads via `MODEL_MANIFEST_SOURCE`.
+
+4. **Configure the web runtime**
+   - Update `.env.local` (or the deployment environment) with:
+     ```
+     MODEL_MANIFEST_SOURCE=../artifacts/manifests/<manifest>.json
+     FEATURE_DATASET_VERSION=7
+     ```
+
+5. **Smoke-test and build**
+   ```bash
+   pytest
+   cd web && npm run test && npm run build
+   ```
+
+6. **Deploy**
+   Ship the built Next.js app (e.g., `vercel --prod`) together with the new manifest and dataset file. The runtime will now read the latest dataset version and roster caches without further manual steps.
