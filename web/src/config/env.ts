@@ -28,7 +28,7 @@ export function getDatasetRoot(): string {
   if (root && root.trim().length > 0) {
     return path.resolve(root);
   }
-  return path.resolve(process.cwd(), "../understat_data");
+  return path.resolve(process.cwd(), "./public/fixtures");
 }
 
 export function getTeamCacheDir(): string {
