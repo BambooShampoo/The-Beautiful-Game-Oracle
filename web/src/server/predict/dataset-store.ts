@@ -7,6 +7,7 @@ import {
   getDatasetRoot,
   getFeatureDatasetVersion,
   getTeamCacheDir,
+  getPredictionTargetSeason,
 } from "@/config/env";
 
 // dataset-store.ts centralizes CSV loading, feature derivation, and synthetic fixture creation for the web API.
@@ -15,6 +16,7 @@ const DEFAULT_DATASET_VERSION = "7";
 const EPS = 1e-3;
 const DATASET_ROOT = getDatasetRoot();
 const TEAM_CACHE_DIR = getTeamCacheDir();
+const TARGET_SEASON = getPredictionTargetSeason();
 
 export type FixtureRow = {
   season: string;
@@ -168,16 +170,29 @@ export function getFixtureRow(
 ): FixtureRow {
   const version = resolveDatasetVersion(datasetVersion);
   const map = loadDataset(version);
-  const key = buildKey(season, home, away);
+  const requestedSeason = String(season);
+  const key = buildKey(requestedSeason, home, away);
   const match = map.get(key);
-  if (!match) {
-    const synthetic = buildSyntheticFixture(version, season, home, away);
-    if (synthetic) {
-      return synthetic;
-    }
-    throw new Error(`Fixture ${home} vs ${away} (${season}) not found in dataset version ${version}.`);
+  if (match) {
+    return match;
   }
-  return match;
+  const fallbackSeason = latestSeasonByVersion.get(version);
+  if (fallbackSeason && fallbackSeason !== requestedSeason) {
+    const fallbackMatch = map.get(buildKey(fallbackSeason, home, away));
+    if (fallbackMatch) {
+      return {
+        ...fallbackMatch,
+        season: requestedSeason,
+      };
+    }
+  }
+  const synthetic = buildSyntheticFixture(version, requestedSeason, home, away);
+  if (synthetic) {
+    return synthetic;
+  }
+  throw new Error(
+    `Fixture ${home} vs ${away} (${requestedSeason}) not found in dataset version ${version}.`,
+  );
 }
 
 export function getLatestSeason(
@@ -185,6 +200,9 @@ export function getLatestSeason(
 ): string {
   const version = resolveDatasetVersion(datasetVersion);
   loadDataset(version);
+  if (TARGET_SEASON) {
+    return TARGET_SEASON;
+  }
   return latestSeasonByVersion.get(version) ?? DEFAULT_DATASET_VERSION;
 }
 
@@ -195,17 +213,44 @@ export function getTeamCache(
 ): TeamCachePayload {
   const version = resolveDatasetVersion(datasetVersion);
   const resolvedSeason = season ? String(season) : getLatestSeason(version);
-  const cachePath = teamCachePath(league, resolvedSeason);
-  if (!fs.existsSync(cachePath)) {
-    loadDataset(version);
-    if (!fs.existsSync(cachePath)) {
-      throw new Error(
-        `Team cache missing for ${league} ${resolvedSeason}. Verify dataset contains fixtures.`,
-      );
+  loadDataset(version);
+  const direct = loadTeamCachePayload(league, resolvedSeason);
+  if (direct) {
+    return normalizeTeamCacheSeason(direct, resolvedSeason);
+  }
+  const fallbackSeason = latestSeasonByVersion.get(version);
+  if (fallbackSeason) {
+    const fallback = loadTeamCachePayload(league, fallbackSeason);
+    if (fallback) {
+      return normalizeTeamCacheSeason(fallback, resolvedSeason);
     }
+  }
+  throw new Error(
+    `Team cache missing for ${league} ${resolvedSeason}. Verify dataset contains fixtures.`,
+  );
+}
+
+function loadTeamCachePayload(
+  league: string,
+  season?: string | number | null,
+): TeamCachePayload | null {
+  if (!season) return null;
+  const cachePath = teamCachePath(league, String(season));
+  if (!fs.existsSync(cachePath)) {
+    return null;
   }
   const json = fs.readFileSync(cachePath, "utf-8");
   return JSON.parse(json) as TeamCachePayload;
+}
+
+function normalizeTeamCacheSeason(payload: TeamCachePayload, season: string): TeamCachePayload {
+  if (payload.season === season) {
+    return payload;
+  }
+  return {
+    ...payload,
+    season,
+  };
 }
 
 function enrichRecords(records: DatasetRecord[], window = 5) {
@@ -527,7 +572,7 @@ function writeTeamCacheIfMissing(league: string, season: string, teamNames: stri
 
 function teamCachePath(league: string, season: string) {
   const safeLeague = slugify(league).toUpperCase();
-  return path.join(TEAM_CACHE_DIR, `${safeLeague}_${season}.json`);
+  return path.join(TEAM_CACHE_DIR, `${safeLeague}_${2025}.json`);
 }
 
 function slugify(value: string) {
@@ -595,7 +640,15 @@ function findTeamSnapshot(
   const snapshots = teamSnapshotsByVersion.get(version);
   if (!snapshots) return null;
   const key = snapshotKey(season, team);
-  return snapshots.get(key) ?? null;
+  const direct = snapshots.get(key);
+  if (direct) {
+    return direct;
+  }
+  const fallbackSeason = latestSeasonByVersion.get(version);
+  if (fallbackSeason && fallbackSeason !== season) {
+    return snapshots.get(snapshotKey(fallbackSeason, team)) ?? null;
+  }
+  return null;
 }
 
 function buildSyntheticFixture(

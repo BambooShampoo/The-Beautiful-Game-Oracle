@@ -1,6 +1,6 @@
 {
   "league": "EPL",
-  "season": "2024",
+  "season": "2025",
   "teams": [
     {
       "name": "Arsenal",
@@ -28,6 +28,11 @@
       "shortName": "BRI"
     },
     {
+      "name": "Burnley",
+      "canonical": "burnley",
+      "shortName": "BUR"
+    },
+    {
       "name": "Chelsea",
       "canonical": "chelsea",
       "shortName": "CHE"
@@ -48,14 +53,9 @@
       "shortName": "FUL"
     },
     {
-      "name": "Ipswich",
-      "canonical": "ipswich",
-      "shortName": "IPS"
-    },
-    {
-      "name": "Leicester",
-      "canonical": "leicester",
-      "shortName": "LEI"
+      "name": "Leeds",
+      "canonical": "leeds",
+      "shortName": "LEE"
     },
     {
       "name": "Liverpool",
@@ -83,9 +83,9 @@
       "shortName": "NF"
     },
     {
-      "name": "Southampton",
-      "canonical": "southampton",
-      "shortName": "SOU"
+      "name": "Sunderland",
+      "canonical": "sunderland",
+      "shortName": "SUN"
     },
     {
       "name": "Tottenham",

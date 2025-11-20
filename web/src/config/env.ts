@@ -1,6 +1,8 @@
 import fs from "node:fs";
 import path from "node:path";
 
+const DEFAULT_TARGET_SEASON = "2025";
+
 export function getManifestSource(): string {
   const value = process.env.MODEL_MANIFEST_SOURCE;
   if (value && value.trim().length > 0) {
@@ -51,11 +53,20 @@ export function getFeatureDatasetVersion(): string | null {
   return null;
 }
 
+export function getPredictionTargetSeason(): string {
+  const value = process.env.PREDICTION_TARGET_SEASON;
+  if (value && value.trim().length > 0) {
+    return value.trim();
+  }
+  return DEFAULT_TARGET_SEASON;
+}
+
 export function getEnvSummary() {
   return {
     manifestSource: process.env.MODEL_MANIFEST_SOURCE ?? null,
     localArtefactRoot: getLocalArtefactRoot(),
     reloadTokenConfigured: Boolean(process.env.RELOAD_TOKEN),
     featureDatasetVersion: getFeatureDatasetVersion(),
+    predictionTargetSeason: getPredictionTargetSeason(),
   };
 }
