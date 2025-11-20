@@ -272,49 +272,43 @@
   "models": [
     {
       "id": "performance_dense",
-      "format": "onnx",
-      "location": {
-        "kind": "local",
-        "path": "/Users/yohannvinod/Github/The-Beautiful-Game-Oracle/artifacts/run_export/performance_dense.onnx"
-      },
+      "format": "heuristic",
+      "location": null,
       "logits": {
-        "home": -0.3670282851104072,
-        "draw": -1.893272865426785,
-        "away": -1.853838479795196
+        "home": 0,
+        "draw": 0,
+        "away": 0
       },
       "probs": {
-        "home": 0.6927890491242281,
-        "draw": 0.15057717936831025,
-        "away": 0.15663377150746158
+        "home": 0.33333322222225925,
+        "draw": 0.33333322222225925,
+        "away": 0.33333322222225925
       },
-      "note": "Inference via onnxruntime-node"
+      "note": "Heuristic fallback (model export not available)."
     },
     {
       "id": "market_gradient_boost",
-      "format": "onnx",
-      "location": {
-        "kind": "local",
-        "path": "/Users/yohannvinod/Github/The-Beautiful-Game-Oracle/artifacts/run_export/market_gradient_boost.onnx"
-      },
+      "format": "heuristic",
+      "location": null,
       "logits": {
-        "home": -0.10363035486512158,
-        "draw": -2.513732938971338,
-        "away": -4.0467509957063745
+        "home": 0,
+        "draw": 0,
+        "away": 0
       },
       "probs": {
-        "home": 0.9015574925460104,
-        "draw": 0.08096443538927323,
-        "away": 0.017478072064716403
+        "home": 0.33333322222225925,
+        "draw": 0.33333322222225925,
+        "away": 0.33333322222225925
       },
-      "note": "Inference via onnxruntime-node"
+      "note": "Heuristic fallback (model export not available)."
     }
   ],
   "ensemble": {
     "method": "log_prob_avg",
     "probs": {
-      "home": 0.8292421955587257,
-      "draw": 0.1158549159960321,
-      "away": 0.05490183918403188
+      "home": 0.3333330000012223,
+      "draw": 0.3333330000012223,
+      "away": 0.3333330000012223
     }
   }
 }

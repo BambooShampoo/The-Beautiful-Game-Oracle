@@ -130,7 +130,9 @@ The motivation for this project comes from our shared interest in football analy
      ```
      MODEL_MANIFEST_SOURCE=../artifacts/manifests/<manifest>.json
      FEATURE_DATASET_VERSION=7
+     FEATURE_DATASET_ROOT=../understat_data    # or ./public/fixtures for the bundled sample
      ```
+   - For Vercel previews, the repo ships a tiny mock bundle under `web/public/fixtures`. Pointing `MODEL_MANIFEST_SOURCE` at `./public/fixtures/mock_manifest.json` and `FEATURE_DATASET_ROOT` at `./public/fixtures` produces deterministic heuristic predictions without uploading private artefacts. For real deployments, change those env vars to your hosted manifest/dataset locations.
 
 5. **Smoke-test and build**
    ```bash

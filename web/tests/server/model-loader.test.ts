@@ -87,7 +87,7 @@ describe("model loader", () => {
 
   it("loads default manifest when env not set but fallback exists", async () => {
     const state = await ensureManifestLoaded(true);
-    expect(state.manifestSource).toContain("artifacts/manifests/dev.json");
+    expect(state.manifestSource).toContain("public/fixtures/mock_manifest.json");
     expect(state.models.length).toBeGreaterThan(0);
   });
 });

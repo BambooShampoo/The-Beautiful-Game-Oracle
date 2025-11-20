@@ -3,13 +3,18 @@ import path from "node:path";
 
 import { parse } from "csv-parse/sync";
 
-import { getFeatureDatasetVersion } from "@/config/env";
+import {
+  getDatasetRoot,
+  getFeatureDatasetVersion,
+  getTeamCacheDir,
+} from "@/config/env";
 
 // dataset-store.ts centralizes CSV loading, feature derivation, and synthetic fixture creation for the web API.
 
 const DEFAULT_DATASET_VERSION = "7";
 const EPS = 1e-3;
-const TEAM_CACHE_DIR = path.resolve(process.cwd(), "../understat_data/team_cache");
+const DATASET_ROOT = getDatasetRoot();
+const TEAM_CACHE_DIR = getTeamCacheDir();
 
 export type FixtureRow = {
   season: string;
@@ -61,10 +66,7 @@ type TeamSnapshot = {
 const teamSnapshotsByVersion = new Map<string, Map<SnapshotKey, TeamSnapshot>>();
 
 function datasetPathFor(version: string) {
-  return path.resolve(
-    process.cwd(),
-    `../understat_data/Dataset_Version_${version}.csv`,
-  );
+  return path.resolve(DATASET_ROOT, `Dataset_Version_${version}.csv`);
 }
 
 function buildKey(season: string, home: string, away: string) {

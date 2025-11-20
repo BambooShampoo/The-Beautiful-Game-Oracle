@@ -6,7 +6,7 @@ export function getManifestSource(): string {
   if (value && value.trim().length > 0) {
     return value;
   }
-  const fallback = path.resolve(process.cwd(), "../artifacts/manifests/dev.json");
+  const fallback = path.resolve(process.cwd(), "./public/fixtures/mock_manifest.json");
   if (fs.existsSync(fallback)) {
     return fallback;
   }
@@ -21,6 +21,22 @@ export function getLocalArtefactRoot(): string {
     return path.resolve(root);
   }
   return path.resolve(process.cwd(), "..");
+}
+
+export function getDatasetRoot(): string {
+  const root = process.env.FEATURE_DATASET_ROOT;
+  if (root && root.trim().length > 0) {
+    return path.resolve(root);
+  }
+  return path.resolve(process.cwd(), "../understat_data");
+}
+
+export function getTeamCacheDir(): string {
+  const dir = process.env.FEATURE_TEAM_CACHE_DIR;
+  if (dir && dir.trim().length > 0) {
+    return path.resolve(dir);
+  }
+  return path.resolve(getDatasetRoot(), "team_cache");
 }
 
 export function getReloadToken(): string | null {
