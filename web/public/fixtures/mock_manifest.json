@@ -1,0 +1,41 @@
+{
+  "run_id": "dev-local",
+  "dataset_version": "7",
+  "trained_at": "2025-01-01T00:00:00Z",
+  "feature_schema_version": "v7",
+  "models": [
+    {
+      "id": "performance_dense",
+      "format": "heuristic",
+      "path": "fixtures/performance_dense.onnx",
+      "local_path": "fixtures/performance_dense.onnx",
+      "sha256": "0",
+      "size_bytes": 0
+    },
+    {
+      "id": "market_gradient_boost",
+      "format": "heuristic",
+      "path": "fixtures/market_gradient_boost.onnx",
+      "local_path": "fixtures/market_gradient_boost.onnx",
+      "sha256": "0",
+      "size_bytes": 0
+    }
+  ],
+  "preprocessing": [
+    {
+      "id": "performance_dense",
+      "path": "fixtures/performance_dense_preprocessing.json",
+      "local_path": "fixtures/performance_dense_preprocessing.json",
+      "sha256": "dev",
+      "size_bytes": 0
+    },
+    {
+      "id": "market_gradient_boost",
+      "path": "fixtures/market_gradient_boost_preprocessing.json",
+      "local_path": "fixtures/market_gradient_boost_preprocessing.json",
+      "sha256": "dev",
+      "size_bytes": 0
+    }
+  ],
+  "attribution": []
+}

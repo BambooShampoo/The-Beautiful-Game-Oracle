@@ -1,0 +1,9 @@
+.venv
+node_modules
+web/.next
+web/node_modules
+export
+artifacts
+understat_data
+*.csv
+
