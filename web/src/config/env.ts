@@ -30,7 +30,7 @@ export function getDatasetRoot(): string {
   if (root && root.trim().length > 0) {
     return path.resolve(root);
   }
-  return path.resolve(process.cwd(), "./public/fixtures");
+  return path.resolve(process.cwd(), "./public/data");
 }
 
 export function getFinancialDatasetPath(version?: string | number | null): string | null {
